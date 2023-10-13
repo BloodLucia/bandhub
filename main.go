@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/kalougata/bandhub/cmd/wire"
 	"github.com/kalougata/bandhub/pkg/http"
 	"xorm.io/xorm"
 )
@@ -32,15 +32,17 @@ func connectDb() {
 }
 
 func main() {
-	r := gin.Default()
+
+	servers, cleanup, err := wire.NewApp()
+
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	connectDb()
 
-	r.GET("/", func(ctx *gin.Context) {
-		ctx.String(200, "hello")
-	})
-
-	http.Run(r, ":8000")
+	http.Run(servers.ServerHTTP, ":8000")
 
 	defer DB.Close()
+	defer cleanup()
 }
