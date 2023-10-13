@@ -7,14 +7,18 @@
 package wire
 
 import (
+	"github.com/kalougata/bandhub/api/v1"
 	"github.com/kalougata/bandhub/internal/common"
+	"github.com/kalougata/bandhub/internal/controller"
 	"github.com/kalougata/bandhub/internal/server"
 )
 
 // Injectors from wire.go:
 
 func NewApp() (*common.Server, func(), error) {
-	engine := server.NewServerHTTP()
+	userController := controller.NewUserController()
+	apiRouter := v1.NewAPIRouter(userController)
+	engine := server.NewServerHTTP(apiRouter)
 	commonServer := common.NewServer(engine)
 	return commonServer, func() {
 	}, nil
