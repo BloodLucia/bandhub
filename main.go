@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/kalougata/bandhub/pkg/http"
 	"xorm.io/xorm"
 )
 
@@ -36,12 +37,10 @@ func main() {
 	connectDb()
 
 	r.GET("/", func(ctx *gin.Context) {
-		ctx.String(200, "hello!")
+		ctx.String(200, "hello")
 	})
 
-	if err := r.Run(":3000"); err != nil {
-		log.Panicf("failed to start http server: %s", err)
-	}
+	http.Run(r, ":8000")
 
 	defer DB.Close()
 }
